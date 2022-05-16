@@ -29,10 +29,10 @@ public class Percolation {
             else {
                 grid[row][col] = true;
                 openNum++;
-                if (row - 1 >= 1 && isOpen(row - 1, col)) wuf.union((row - 1) * n + col, row * n + col);
-                if (row + 1 <= n && isOpen(row + 1, col)) wuf.union((row + 1) * n + col, row * n + col);
-                if (col - 1 >= 1 && isOpen(row, col - 1)) wuf.union(row * n + col - 1, row * n + col);
-                if (col + 1 <= n && isOpen(row, col + 1)) wuf.union(row * n + col + 1, row * n + col);
+                if (row - 1 >= 1 && isOpen(row - 1, col)) wuf.union((row - 2) * n + col, (row - 1) * n + col);
+                if (row + 1 <= n && isOpen(row + 1, col)) wuf.union(row * n + col, (row - 1) * n + col);
+                if (col - 1 >= 1 && isOpen(row, col - 1)) wuf.union((row - 1) * n + col - 1, (row - 1) * n + col);
+                if (col + 1 <= n && isOpen(row, col + 1)) wuf.union((row - 1) * n + col + 1, (row - 1) * n + col);
             }
         }
     }
@@ -48,7 +48,7 @@ public class Percolation {
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
         for (int i = 1; i <= n; i++) {
-            if (isOpen(row, col) && isOpen(1, i) && wuf.find(i) == wuf.find(row  * n + col)) {
+            if (isOpen(row, col) && isOpen(1, i) && wuf.find(i) == wuf.find((row - 1)  * n + col)) {
                 return true;
             }
         }
