@@ -6,9 +6,14 @@ public class Percolation {
     private final WeightedQuickUnionUF wuf;
     private final int n;
     private int openNum;
+    private final int top;
+    private final int bottom;
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
+        if (n <= 0) {
+            throw(new IllegalArgumentException());
+        }
         grid = new boolean[n + 1][n + 1];
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= n; j++) {
@@ -17,7 +22,12 @@ public class Percolation {
         }
         wuf = new WeightedQuickUnionUF((n + 1) * (n + 1));
         this.n = n;
-        openNum = 0;
+        top = (n + 1) * (n + 1) - 1;
+        bottom = (n + 1) * (n + 1) - 2;
+        for (int i = 1; i <= n; i++) {
+            wuf.union(top, i);
+            wuf.union(bottom, (n - 1) * n + i);
+        }
     }
 
     // opens the site (row, col) if it is not open already
@@ -47,12 +57,12 @@ public class Percolation {
 
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
-        for (int i = 1; i <= n; i++) {
-            if (isOpen(row, col) && isOpen(1, i) && wuf.find(i) == wuf.find((row - 1)  * n + col)) {
-                return true;
-            }
+
+        if (isOpen(row, col)) {
+            return wuf.find(top) == wuf.find((row - 1) * n + col);
         }
         return false;
+
     }
 
     // returns the number of open sites
@@ -62,10 +72,7 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        for (int i = 1; i <= n; i++) {
-            if (isOpen(n, i) && isFull(n, i)) return true;
-        }
-        return false;
+        return wuf.find(top) == wuf.find(bottom);
     }
 
     // test client (optional)
